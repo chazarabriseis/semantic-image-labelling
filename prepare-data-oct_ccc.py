@@ -12,13 +12,13 @@ from random import shuffle
 
 
 # ### Set the directories of the data
-cwd_gts = '/u/juliabal/OCT-project/Data/Binary/'
-cwd_top = '/u/juliabal/OCT-project/Data/Raw/'
+cwd_gts = '/u/juliabal/OCT-project/Data/Trainingdata/Binary/'
+cwd_top = '/u/juliabal/OCT-project/Data/Trainingdata/Raw/'
 cwd_data = '/u/juliabal/OCT-project/Data/'
 os.chdir(cwd_gts)
 os.getcwd()
 
-box_size = 50
+box_size = 12
 pickle_file = 'size%s-balance.pickle' % str(box_size)
 
 data_top = sorted(glob.glob('*'))
@@ -49,19 +49,15 @@ def getDominantLabel(im_gst_crop):
     
 
 
-# ### Set the parameter for data preparation
-
+### Set the parameter for data preparation
 #define the box size around 
-
-max_box_size = 50
+max_box_size = 48
 stride = 10
-print ((((900-max_box_size)/stride)+1) * (((900-max_box_size)/stride)+1)) 
-print ((((900-max_box_size)/stride)+1) * (((900-max_box_size)/stride)+1))*len(data_top)
+print "%s images will be created per image" % str(((((900-max_box_size)/stride)+1) * (((900-max_box_size)/stride)+1)) )
+print "%s images will be created of the entire training set" % str(((((900-max_box_size)/stride)+1) * (((900-max_box_size)/stride)+1))*len(data_top))
 
 
-# ### Load the ground truth and image data and cut the into images with 64x64 images and the according label
-
-
+### Load the ground truth and image data and cut the into images with 64x64 images and the according label
 image_data_balance = []
 label_pixel_balance = []
 for item in data_top:
@@ -75,18 +71,20 @@ for item in data_top:
         print "Problem, gst and top data doesn't match"
     #Define the iwdth and the height of the image to be cut up in smaller images
     width, height = im_gst.size
+    #Since the outer image doesn't have real information the image is cropped first to a smaller box
     box = 0.2*width,0.2*height,0.8*width,0.8*height
     im_gst = im_gst.crop(box)
     im_top = im_top.crop(box)
     width, height = im_gst.size
+    print "Image widht %s and image height %s" % (width, height) 
     #Go through the height (y-axes) of the image
-    for i in range(0,((height- max_box_size)/stride +1)):
+    for i in range(0,(int((height- max_box_size)/stride) +1)):
         center_point_y = max_box_size/2+i*stride
         #Go through the width (x-axes) of the image using the same centerpoint independent of boxsize
-        for j in range(0,((width- max_box_size)/stride + 1)):
-            center_point_x = max_box_size/2+j*stride
-            box = center_point_x-box_size/2, center_point_y-box_size/2, center_point_x+box_size/2,center_point_y+box_size/2
-            image_data.append(np.array(im_top.crop(box)))
+        for j in range(0,(int((width- max_box_size)/stride) + 1)):
+            center_point_x = int(max_box_size/2+j*stride)
+            box = int(center_point_x-box_size/2), int(center_point_y-box_size/2), int(center_point_x+box_size/2), int(center_point_y+box_size/2)
+	    image_data.append(np.array(im_top.crop(box)))
             label_pixel.append(getDominantLabel(im_gst.crop(box)))
     #Here we create a balnaced dataset of 50% stent labels (label 1) and 50% others (label 0)
     #create two lists with all the indices with label 1 or label 0
@@ -112,28 +110,7 @@ print len(label_pixel_balance)
 labels = np.asarray(label_pixel_balance)
 dataset = np.asarray(image_data_balance)
 
-
-# ### Check the Images
-import sys
-#images = map(Image.open, ['Test1.jpg', 'Test2.jpg', 'Test3.jpg'])
-images = [Image.fromarray(dataset[i]) for i in range(0,len(dataset))]
-widths, heights = zip(*(i.size for i in images))
-
-total_width = sum(widths)
-max_height = max(heights)
-
-new_im = Image.new('RGB', (total_width, max_height))
-
-x_offset = 0
-for im in images:
-  new_im.paste(im, (x_offset,0))
-  x_offset += im.size[0]
-
-new_im.save('test.jpg')
-
-
 # Randomise a dataset together with the labels
-
 def randomize(dataset, labels):
   permutation = np.random.permutation(labels.shape[0])
   shuffled_dataset = dataset[permutation,:,:]
@@ -143,9 +120,7 @@ train_dataset, train_labels = randomize(dataset,labels)
 
 
 # ### Save the images in a pickle file for later use
-
 os.chdir(cwd_data)
-
 
 try:
   f = open(pickle_file, 'wb')

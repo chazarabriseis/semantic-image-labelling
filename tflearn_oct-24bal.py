@@ -16,9 +16,10 @@ import semantic_functions as sf
 import os
 cwd = '/u/juliabal/OCT-project'
 
-box_size = 50
+box_size = 24
+kernel_size = 3
 pickle_file = 'size%s-balance.pickle' % str(box_size)
-
+run_name = 'oct-cvn-%sbal' % str(box_size)
 
 cwd_data = '/u/juliabal/OCT-project/Data'
 os.chdir(cwd_data)
@@ -46,13 +47,13 @@ input = box_size
 network = input_data(shape=[None, input, input, 3],
                      data_preprocessing=img_prep,
                      data_augmentation=img_aug)
-network = conv_2d(network, input/2, 5, activation='relu')
+network = conv_2d(network, input/2, kernel_size, activation='relu')
 network = max_pool_2d(network, 2)
-network = conv_2d(network, input, 5, activation='relu')
+network = conv_2d(network, input, kernel_size, activation='relu')
 network = max_pool_2d(network, 2)
-network = conv_2d(network, input*2, 5, activation='relu')
+network = conv_2d(network, input*2, kernel_size, activation='relu')
 network = max_pool_2d(network, 2)
-network = conv_2d(network, input*2*2, 5, activation='relu')
+network = conv_2d(network, input*2*2, kernel_size, activation='relu')
 network = max_pool_2d(network, 2)
 network = fully_connected(network, 128, activation='relu')
 network = dropout(network, 0.5)
@@ -66,7 +67,7 @@ network = regression(network, optimizer='adam',
 
 # Train using classifier
 model = tflearn.DNN(network, tensorboard_verbose=0,tensorboard_dir=cwd,checkpoint_path=cwd)
-model.fit(X, Y, n_epoch=10, validation_set=0.1, show_metric=True, run_id='artery_cnn-50b',snapshot_epoch=True)
+model.fit(X, Y, n_epoch=40, validation_set=0.1, show_metric=True, run_id=run_name, snapshot_epoch=True)
 
 
 
