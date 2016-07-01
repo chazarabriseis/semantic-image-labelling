@@ -14,25 +14,25 @@ from tflearn.layers.estimator import regression
 import semantic_functions as sf
 
 import os
-cwd = '/u/juliabal/OCT-project'
 
 box_size = 12
 kernel_size = 2
+epoch_nummer = 40
 pickle_file = 'size%s-balance.pickle' % str(box_size)
 run_name = 'oct-cvn-%sbal' % str(box_size)
-
-cwd_data = '/u/juliabal/OCT-project/Data'
+cwd_checkpoint = '/u/juliabal/OCT-project/%s' % run_name
+cwd = '/u/juliabal/OCT-project/'
+cwd_data = '/u/juliabal/OCT-project/Data/'
 os.chdir(cwd_data)
+
 #Load Input Data from 
 images, labels = sf.load_data(pickle_file, cwd_data)
 X, Y, X_valid, Y_valid, X_test, Y_test = sf.data_prep(images, labels, 0, 0)
-
 
 # Real-time data preprocessing
 img_prep = ImagePreprocessing()
 img_prep.add_featurewise_zero_center()
 img_prep.add_featurewise_stdnorm()
-
 
 # Real-time data augmentation
 img_aug = ImageAugmentation()
@@ -40,7 +40,6 @@ img_aug.add_random_flip_leftright()
 img_aug.add_random_rotation(max_angle=360.)
 img_aug.add_random_blur(sigma_max=3.)
 img_aug.add_random_flip_updown()
-
 
 input = box_size
 # Convolutional network building
@@ -64,10 +63,9 @@ network = regression(network, optimizer='adam',
                      loss='categorical_crossentropy',
                      learning_rate=0.001)
 
-
 # Train using classifier
-model = tflearn.DNN(network, tensorboard_verbose=0,tensorboard_dir=cwd,checkpoint_path=cwd)
-model.fit(X, Y, n_epoch=40, validation_set=0.1, show_metric=True, run_id=run_name, snapshot_epoch=True)
+model = tflearn.DNN(network, tensorboard_verbose=0,tensorboard_dir=cwd,checkpoint_path=cwd_checkpoint)
+model.fit(X, Y, n_epoch=epoch_nummer, validation_set=0.1, show_metric=True, run_id=run_name, snapshot_epoch=True)
 
 
 
