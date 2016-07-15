@@ -12,13 +12,13 @@ from random import shuffle
 
 
 # ### Set the directories of the data
-cwd_gts = '/u/juliabal/OCT-project/Data/Trainingdata/Binary/'
+cwd_gts = '/u/juliabal/OCT-project/Data/Trainingdata/Binary2/'
 cwd_top = '/u/juliabal/OCT-project/Data/Trainingdata/Raw/'
 cwd_data = '/u/juliabal/OCT-project/Data/'
 os.chdir(cwd_gts)
 os.getcwd()
 
-box_size = 12
+box_size = 48
 pickle_file = 'size%s-balance.pickle' % str(box_size)
 
 data_top = sorted(glob.glob('*'))
@@ -91,41 +91,55 @@ for item in data_top:
     index_1 = []
     index_0 = []
     im_gst = Image.open(cwd_gts + item)
-    im_top = Image.open(cwd_top + item)
+    im_top = Image.open(cwd_top + item[:item.find('.png')] + '.jpg')
     if (im_gst.size != im_top.size):
         print "Problem, gst and top data doesn't match"
-    #Define the iwdth and the height of the image to be cut up in smaller images
+    #Define the width and the height of the image to be cut up in smaller images
     width, height = im_gst.size
-    #Since the outer image doesn't have real information the image is cropped first to a smaller box
     box = 0.2*width,0.2*height,0.8*width,0.8*height
     im_gst = im_gst.crop(box)
     im_top = im_top.crop(box)
     width, height = im_gst.size
-    print "Image widht %s and image height %s" % (width, height) 
+    pixels_gst = im_gst.load()
     #Go through the height (y-axes) of the image
-    for i in range(0,(int((height- max_box_size)/stride) +1)):
+    for i in range(0,((height- max_box_size)/stride +1)):
         center_point_y = max_box_size/2+i*stride
         #Go through the width (x-axes) of the image using the same centerpoint independent of boxsize
-        for j in range(0,(int((width- max_box_size)/stride) + 1)):
-            center_point_x = int(max_box_size/2+j*stride)
-            box = int(center_point_x-box_size/2), int(center_point_y-box_size/2), int(center_point_x+box_size/2), int(center_point_y+box_size/2)
-	    image_data.append(np.array(im_top.crop(box)))
-            label_pixel.append(getDominantLabel(im_gst.crop(box)))
+        for j in range(0,((width- max_box_size)/stride + 1)):
+            center_point_x = max_box_size/2+j*stride
+            box = center_point_x-box_size/2, center_point_y-box_size/2, center_point_x+box_size/2,center_point_y+box_size/2
+            image_data.append(np.array(im_top.crop(box)))
+            label_pixel.append(getCenterLabel(pixels_gst[center_point_x,center_point_y]))
     #Here we create a balnaced dataset of 50% stent labels (label 1) and 50% others (label 0)
     #create two lists with all the indices with label 1 or label 0
+    index_5 = [i for i, j in enumerate(label_pixel) if j == 5]
+    index_4 = [i for i, j in enumerate(label_pixel) if j == 4]
+    index_3 = [i for i, j in enumerate(label_pixel) if j == 3]
+    index_2 = [i for i, j in enumerate(label_pixel) if j == 2]
     index_1 = [i for i, j in enumerate(label_pixel) if j == 1]
     index_0 = [i for i, j in enumerate(label_pixel) if j == 0]
-    #shuffle the index list of the 0 labels
-    shuffle(index_0)
+    #shuffle the index list of the labels not being a stent
+    shuffle(index_4)    
+    shuffle(index_3)    
+    shuffle(index_2)    
+    shuffle(index_1)    
+    shuffle(index_0)                           
     #append all stent labelled images and it's labels 1
-    for i in range(0,len(index_1)):
-        image_data_balance.append(image_data[index_1[i]])
-        label_pixel_balance.append(1)
+    for i in range(0,len(index_5)):
+        image_data_balance.append(image_data[index_5[i]])
+        label_pixel_balance.append(5)
         #append as many other labelled images as stent labelled images exist (the shuffling makes sure they are randomly others)
+        image_data_balance.append(image_data[index_4[i]])
+        label_pixel_balance.append(4) 
+        image_data_balance.append(image_data[index_3[i]])
+        label_pixel_balance.append(3) 
+        image_data_balance.append(image_data[index_2[i]])
+        label_pixel_balance.append(2) 
+        image_data_balance.append(image_data[index_1[i]])
+        label_pixel_balance.append(1) 
         image_data_balance.append(image_data[index_0[i]])
-        #[image_data[i] for i in index_0[0:len(index_1)]])
         label_pixel_balance.append(0)   
-    print 'Processed %s and added %d images'%(item, len(index_1))
+    print 'Processed %s and added %d images'%(item, len(index_5))
 
 
 print len(label_pixel_balance)
