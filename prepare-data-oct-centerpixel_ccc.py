@@ -129,16 +129,22 @@ for item in data_top:
         image_data_balance.append(image_data[index_5[i]])
         label_pixel_balance.append(5)
         #append as many other labelled images as stent labelled images exist (the shuffling makes sure they are randomly others)
-        image_data_balance.append(image_data[index_4[i]])
-        label_pixel_balance.append(4) 
-        image_data_balance.append(image_data[index_3[i]])
-        label_pixel_balance.append(3) 
-        image_data_balance.append(image_data[index_2[i]])
-        label_pixel_balance.append(2) 
-        image_data_balance.append(image_data[index_1[i]])
-        label_pixel_balance.append(1) 
-        image_data_balance.append(image_data[index_0[i]])
-        label_pixel_balance.append(0)   
+        if index_4[i]:
+            image_data_balance.append(image_data[index_4[i]])
+            label_pixel_balance.append(4) 
+        if index_3[i]:
+            image_data_balance.append(image_data[index_3[i]])
+            label_pixel_balance.append(3) 
+        if index_2[i]:
+            image_data_balance.append(image_data[index_2[i]])
+            label_pixel_balance.append(2) 
+        if index_1[i]:
+            image_data_balance.append(image_data[index_1[i]])
+            label_pixel_balance.append(1) 
+        if index_0[i]:
+            image_data_balance.append(image_data[index_0[i]])
+            label_pixel_balance.append(0)   
+    print 'Artery shadow pixel %s Lumen pixel %s Artery wall pixel %s Inside pixel %s Outside pixel %s' % (index_4,index_3,index_2,index_1,index_0)
     print 'Processed %s and added %d images'%(item, len(index_5))
 
 
