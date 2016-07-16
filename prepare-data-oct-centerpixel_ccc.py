@@ -19,7 +19,7 @@ os.chdir(cwd_gts)
 os.getcwd()
 
 box_size = 48
-pickle_file = 'size%s-balance.pickle' % str(box_size)
+pickle_file = 'size%s-6c-balance.pickle' % str(box_size)
 
 data_top = sorted(glob.glob('*'))
 print data_top
