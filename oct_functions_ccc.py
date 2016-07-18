@@ -23,7 +23,7 @@ def loadImage(image_name):
     return Image.open(image_name)
 
 
-def prepareImage(pic, box_size = 48):
+def prepareImage(pic, box_size, stride):
     """
     Takes and image and prepares it in the same way the images 
     were prepared for training the model which will be used to predict a label
@@ -34,7 +34,6 @@ def prepareImage(pic, box_size = 48):
             (depends on the model for predictions)
     """
     max_box_size = box_size
-    stride = box_size
     pic_sliced = []
     #Define the iwdth and the height of the image to be cut up in smaller images
     width, height = pic.size

@@ -9,22 +9,23 @@
 import numpy as np
 import oct_functions_ccc as oct
 
-#cwd_data = '/u/jbaldauf/OCT-project/Data/Evaluationdata/Raw/'
-#cwd_model = '/u/jbaldauf/OCT-project/Data/Checkpoints/'
-#cwd_save = '/u/jbaldauf/OCT-project/Data/Evaluationdata/'
-cwd_data = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/Raw/'
-cwd_model = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/final/'
-cwd_save = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/'
-
-evaldata_name = cwd_data+'Image060.jpg'
+stride = 10
+cwd_data = '../Data/Evaluationdata/Raw/'
+cwd_model = '../Data/Checkpoints/'
+cwd_save = '../Data/Evaluationdata/'
+#cwd_data = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/Raw/'
+#cwd_model = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/final/'
+#cwd_save = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/'
+name = 'Image027.jpg'
+evaldata_name = cwd_data+name
 model_name = cwd_model+'oct-cvn-48bal-6c-114300'
-prediction_name=cwd_save+'Image060_pred.jpg'
+prediction_name=cwd_save+ str(stride)+name
 ##from my local machine...for this example I set it to a knwon image: 'Image061.jpg' 
 pic = oct.loadImage(evaldata_name)
 print("Succesfully loaded image")
 
 ##pass this picture to a function that prepares it for th 64pixel CVN
-pic_top = oct.prepareImage(pic)
+pic_top = oct.prepareImage(pic,box_size = 48, stride=stride)
 print("Succesfully prepared image for prediction")
 
 ##load the model of interest and calculate predictions
