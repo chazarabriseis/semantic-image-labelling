@@ -51,7 +51,7 @@ def prepareImage(pic, box_size = 48):
             pic_sliced.append(pic.crop(box))
     return(pic_sliced)
 
-def loadModel64(pic_top, model_name):
+def loadModel64(pic_top, model_name,cwd_checkpoint):
     """
     Loads the model trained on 64x64 images on the CCC    
     Runs each image thourgh the model and stores it's output
@@ -60,7 +60,6 @@ def loadModel64(pic_top, model_name):
 
     Output: np array of 1-hot encoding label 
     """
-    cwd_checkpoint = '/dummie/'
     box_size = 48
     input_size = box_size
     kernel_size = 5
@@ -90,7 +89,7 @@ def loadModel64(pic_top, model_name):
     network = dropout(network, 0.5)
     network = fully_connected(network, 128, activation='relu')
     network = dropout(network, 0.5)
-    network = fully_connected(network, 2, activation='softmax')
+    network = fully_connected(network, 6, activation='softmax')
     network = regression(network, optimizer='adam',
                      loss='categorical_crossentropy',
                      learning_rate=0.001)
@@ -112,7 +111,42 @@ def colorizer_bw(i):
         return (0,255,255)
     else: return (255,0,255)
 
+def get_label(prediction):
+    """
+    Convert the label into a rgb colour value
+    
+    Input: Vector with 1-hot encoding labels
+    
+    Output: Vector with rgb colour
+    """
+    index = prediction.index(max(prediction))
+    return colorizer(index)
 
+def colorizer(pixel):
+    """
+    background = black = (0,0,0)
+    outside = red = (255,0,0)
+    inside = green = (255,255,0)
+    lumen = yellow = (0,255,0)
+    catheder shadow = blue = (0,0,255)
+    artery wall = turquisw = (0,255,255)
+    stent = pink = (255,0,255)
+    
+    input integer between 0-5
+    output RGV value of pixel
+    """
+    if pixel == 0:
+        return (255,0,0)
+    if pixel == 1:
+        return (255,255,0)
+    if pixel == 2:
+        return (0,255,0)
+    if pixel == 3:
+        return (0,0,255)
+    if pixel == 4:
+        return (0,255,255)
+    if pixel == 5:
+        return (255,0,255)
 
 def makeImage(predictions, box_size = 48):
     """
@@ -123,7 +157,7 @@ def makeImage(predictions, box_size = 48):
     output: PIL image
     """
     size = int(np.sqrt(len(predictions))), int(np.sqrt(len(predictions)))
-    im_gts_rgb = [colorizer(predictions[i]) for i in range(0,len(predictions))]
+    im_gts_rgb = [get_label(predictions[i]) for i in range(0,len(predictions))]
     im_label = Image.new("RGB", size)
     im_label.putdata(im_gts_rgb)
     #Here the image gets expaned top the original image size
@@ -145,7 +179,7 @@ def makeImagefromLabel(predictions, box_size = 48):
     im_label = im_label.transform((box_size*int(np.sqrt(len(predictions))),box_size*int(np.sqrt(len(predictions)))), Image.EXTENT, (0,0,int(np.sqrt(len(predictions))),int(np.sqrt(len(predictions)))))
     return im_label
 
-def save_image(im_label, cwd = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/',name='image_labelled.jpg'):
+def save_image(im_label, name):
     """
     Saves a PIL image
     
@@ -153,7 +187,6 @@ def save_image(im_label, cwd = '/Users/jbaldauf/Documents/Tensorflow/OCT-project
     
     Output: File in Path of image
     """
-    os.chdir(cwd)
     im_label.save(name)
 
 def labelOntheFly(pic, box_size = 48,cwd_checkpoint = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/final/', model_name='oct-cvn-48bal-7400'):
