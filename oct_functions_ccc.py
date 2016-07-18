@@ -12,7 +12,7 @@ from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.normalization import local_response_normalization
 from tflearn.layers.estimator import regression
 
-def loadImage(image_name = 'Image061.jpg', cwd = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/Raw/'):
+def loadImage(image_name):
     """
     Loads an image from a certain directory
 
@@ -20,9 +20,7 @@ def loadImage(image_name = 'Image061.jpg', cwd = '/Users/jbaldauf/Documents/Tens
 
     Output: PIL image
     """
-    os.chdir(cwd)
-    os.getcwd()
-    return Image.open(cwd + image_name)
+    return Image.open(image_name)
 
 
 def prepareImage(pic, box_size = 48):
@@ -43,7 +41,7 @@ def prepareImage(pic, box_size = 48):
     box = 0.2*width,0.2*height,0.8*width,0.8*height
     pic = pic.crop(box)
     width, height = pic.size
-    #Go through the height (y-axes) of the image
+    #Go through the height (y-axes) of thie image
     for i in range(0,int((height- max_box_size)/stride +1)):
         center_point_y = max_box_size/2+i*stride
         #Go through the width (x-axes) of the image using the same centerpoint independent of boxsize
@@ -53,7 +51,7 @@ def prepareImage(pic, box_size = 48):
             pic_sliced.append(pic.crop(box))
     return(pic_sliced)
 
-def loadModel64(pic_top, cwd_checkpoint = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/final/', model_name='oct-cvn-48bal-7400'):
+def loadModel64(pic_top, model_name):
     """
     Loads the model trained on 64x64 images on the CCC    
     Runs each image thourgh the model and stores it's output
@@ -62,6 +60,7 @@ def loadModel64(pic_top, cwd_checkpoint = '/Users/jbaldauf/Documents/Tensorflow/
 
     Output: np array of 1-hot encoding label 
     """
+    cwd_checkpoint = '/dummie/'
     box_size = 48
     input_size = box_size
     kernel_size = 5
@@ -95,14 +94,13 @@ def loadModel64(pic_top, cwd_checkpoint = '/Users/jbaldauf/Documents/Tensorflow/
     network = regression(network, optimizer='adam',
                      loss='categorical_crossentropy',
                      learning_rate=0.001)
-    os.chdir(cwd_checkpoint)
     # Defining model
     model = tflearn.DNN(network, tensorboard_verbose=0,tensorboard_dir=cwd_checkpoint,checkpoint_path=cwd_checkpoint)
     model.load(model_name)
     print('Model sucessfully loaded')
     return model.predict(pic_top)
 
-def colorizer(i):
+def colorizer_bw(i):
     """
     Convert the label into a rgb colour value
     
@@ -113,6 +111,8 @@ def colorizer(i):
     if i[0] > 0.5:
         return (0,255,255)
     else: return (255,0,255)
+
+
 
 def makeImage(predictions, box_size = 48):
     """
