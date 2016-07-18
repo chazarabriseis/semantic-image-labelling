@@ -72,12 +72,14 @@ def getCenterLabel(pixel):
         return 4
     if pixel == (255,0,255):
         return 5
-    else: print("not labelled right %s" % str(pixel))
+    else:
+	return 6 
+	print("not labelled right %s" % str(pixel))
 
 ### Set the parameter for data preparation
 #define the box size around 
 max_box_size = 48
-stride = 10
+stride = 5
 print "%s images will be created per image" % str(((((900-max_box_size)/stride)+1) * (((900-max_box_size)/stride)+1)) )
 print "%s images will be created of the entire training set" % str(((((900-max_box_size)/stride)+1) * (((900-max_box_size)/stride)+1))*len(data_top))
 
@@ -132,19 +134,19 @@ for item in data_top:
         if index_4[i]:
             image_data_balance.append(image_data[index_4[i]])
             label_pixel_balance.append(4) 
-        if index_3[i]:
+        if i < len(index_3):
             image_data_balance.append(image_data[index_3[i]])
             label_pixel_balance.append(3) 
-        if index_2[i]:
+        if i < len(index_2):
             image_data_balance.append(image_data[index_2[i]])
             label_pixel_balance.append(2) 
-        if index_1[i]:
+        if i < len(index_1):
             image_data_balance.append(image_data[index_1[i]])
             label_pixel_balance.append(1) 
-        if index_0[i]:
+        if i < len(index_0):
             image_data_balance.append(image_data[index_0[i]])
             label_pixel_balance.append(0)   
-    print 'Artery shadow pixel %s Lumen pixel %s Artery wall pixel %s Inside pixel %s Outside pixel %s' % (index_4,index_3,index_2,index_1,index_0)
+    print 'Artery wall: %s Catheter shadow: %s Inside: %s Lumen: %s Outside: %s' % (len(index_4),len(index_3),len(index_2),len(index_1),len(index_0))
     print 'Processed %s and added %d images'%(item, len(index_5))
 
 
