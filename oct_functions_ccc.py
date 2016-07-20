@@ -188,7 +188,7 @@ def save_image(im_label, name):
     """
     im_label.save(name)
 
-def labelOntheFly(pic, box_size = 48,cwd_checkpoint = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/final/', model_name='oct-cvn-48bal-7400'):
+def labelOntheFly(pic, model_name,cwd_checkpoint, stride, box_size):
     """
     Takes and image and prepares it in the same way the images 
     were prepared for training the model which will be used to predict a label
@@ -226,7 +226,7 @@ def labelOntheFly(pic, box_size = 48,cwd_checkpoint = '/Users/jbaldauf/Documents
     network = dropout(network, 0.5)
     network = fully_connected(network, 128, activation='relu')
     network = dropout(network, 0.5)
-    network = fully_connected(network, 2, activation='softmax')
+    network = fully_connected(network, 6, activation='softmax')
     network = regression(network, optimizer='adam',
                      loss='categorical_crossentropy',
                      learning_rate=0.001)
@@ -234,10 +234,10 @@ def labelOntheFly(pic, box_size = 48,cwd_checkpoint = '/Users/jbaldauf/Documents
     # Defining model
     model = tflearn.DNN(network, tensorboard_verbose=0,tensorboard_dir=cwd_checkpoint,checkpoint_path=cwd_checkpoint)
     model.load(model_name)
-    print('Model sucessfully loaded')
+    print('Model sucessfully loaded fro label on the fly')
     
     max_box_size = box_size
-    stride = 1
+    #stride = 1
     labels_predcited = []
     #Define the width and the height of the image to be cut up in smaller images
     width, height = pic.size
