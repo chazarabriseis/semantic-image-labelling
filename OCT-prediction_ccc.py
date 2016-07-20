@@ -9,7 +9,7 @@
 import numpy as np
 import oct_functions_ccc as oct
 
-stride = 1
+stride = 100
 #cwd_data = '../Data/Evaluationdata/Raw/'
 #cwd_model = '../Data/Checkpoints/'
 #cwd_save = '../Data/Evaluationdata/'
@@ -24,10 +24,6 @@ prediction_name=cwd_save+ str(stride)+name
 ##from my local machine...for this example I set it to a knwon image: 'Image061.jpg' 
 pic = oct.loadImage(evaldata_name)
 print("Succesfully loaded image")
-
-##pass this picture to a function that prepares it for th 64pixel CVN
-#pic_top = oct.prepareImage(pic,box_size = 48, stride=stride)
-#print("Succesfully prepared image for prediction")
 
 ##load the model of interest and calculate predictions
 pic_label = oct.labelOntheFly(pic,model_name,cwd_model,stride=stride,box_size = 48)
