@@ -65,7 +65,6 @@ def labelOntheFly(pic, model_name,cwd_checkpoint, stride, box_size):
     network = regression(network, optimizer='adam',
                      loss='categorical_crossentropy',
                      learning_rate=0.001)
-    os.chdir(cwd_checkpoint)
     # Defining model
     model = tflearn.DNN(network, tensorboard_verbose=0,tensorboard_dir=cwd_checkpoint,checkpoint_path=cwd_checkpoint)
     model.load(model_name)
@@ -141,12 +140,11 @@ def makeImage(predictions, box_size = 48):
     output: PIL image
     """
     size = int(np.sqrt(len(predictions))), int(np.sqrt(len(predictions)))
-    print(predictions[0:3])
     im_gts_rgb = predictions #[get_label(predictions[i]) for i in range(0,len(predictions))]
     im_label = Image.new("RGB", size)
     im_label.putdata(im_gts_rgb)
     #Here the image gets expaned top the original image size
-    im_label = im_label.transform((box_size*int(np.sqrt(len(predictions))),box_size*int(np.sqrt(len(predictions)))), Image.EXTENT, (0,0,int(np.sqrt(len(predictions))),int(np.sqrt(len(predictions)))))
+    #im_label = im_label.transform((box_size*int(np.sqrt(len(predictions))),box_size*int(np.sqrt(len(predictions)))), Image.EXTENT, (0,0,int(np.sqrt(len(predictions))),int(np.sqrt(len(predictions)))))
     return im_label
 
 def save_image(im_label, name):

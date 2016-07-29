@@ -9,15 +9,15 @@
 import numpy as np
 import oct_functions_ccc as oct
 
-stride = 100
-#cwd_data = '../Data/Evaluationdata/Raw/'
-#cwd_model = '../Data/Checkpoints/'
-#cwd_save = '../Data/Evaluationdata/'
-cwd_data = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/Raw/'
-cwd_model = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/final/'
-cwd_save = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/'
+stride = 1
+cwd_data = '../Data/Evaluationdata/Raw/'
+cwd_model = '../Data/Checkpoints/'
+cwd_save = '../Data/Evaluationdata/'
+#cwd_data = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/Raw/'
+#cwd_model = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/final/'
+#cwd_save = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/'
 
-name = 'Image027.jpg'
+name = 'Image0003.jpg'
 evaldata_name = cwd_data+name
 model_name = cwd_model+'oct-cvn-48bal-6c-114300'
 prediction_name=cwd_save+ str(stride)+name
