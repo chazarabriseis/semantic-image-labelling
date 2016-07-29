@@ -26,12 +26,12 @@ def labelOntheFly(pic, model_name,cwd_checkpoint, stride, box_size):
     """
     Takes and image and prepares it in the same way the images 
     were prepared for training the model which will be used to predict a label
-    Goes through the image line by line to avoid using too much 
+    Goes through the image line by line to avoid using too much memory 
 
-    Input: PIL image for prediction
+    Input: PIL image for prediction, model to load, path to model, stride of scanning image
+                box_size
 
-    Output: np.array that stores sections of the image for prediction 
-            (depends on the model for predictions)
+    Output: np.array of rgb values of the label with length widt*height
     """
     input_size = box_size
     kernel_size = 5
@@ -71,7 +71,6 @@ def labelOntheFly(pic, model_name,cwd_checkpoint, stride, box_size):
     print('Model sucessfully loaded for label on the fly')
     
     max_box_size = box_size
-    #stride = 1
     labels_predcited = []
     #Define the width and the height of the image to be cut up in smaller images
     width, height = pic.size
@@ -79,24 +78,27 @@ def labelOntheFly(pic, model_name,cwd_checkpoint, stride, box_size):
     pic = pic.crop(box)
     width, height = pic.size
     #Go through the height (y-axes) of the image
-    for i in range(0,int((height- max_box_size)/stride +1)):
+    for i in xrange(int((height-max_box_size)/stride)):
         center_point_y = max_box_size/2+i*stride
         pic_temp = []
+        predictions_temp = []
+        labels_temp = []
         #Go through the width (x-axes) of the image using the same centerpoint independent of boxsize
-        for j in range(0,int((width- max_box_size)/stride + 1)):
+        for j in xrange(int((width- max_box_size)/stride)):
             center_point_x = max_box_size/2+j*stride
             box = center_point_x-box_size/2, center_point_y-box_size/2, center_point_x+box_size/2,center_point_y+box_size/2
             pic_temp.append(pic.crop(box))
         predictions_temp = model.predict(pic_temp)
-        labels_temp = [get_label(predictions_temp[i]) for i in range(0,len(predictions_temp))]
+        labels_temp = [get_label(predictions_temp[k]) for k in xrange(len(predictions_temp))]
         labels_predcited.append(labels_temp)
-    labels_final = [item for i in range(0,len(labels_predcited)) for item in labels_predcited[i]]
-    print(labels_final[0:2])
+        print('Line %s done' % str(i))
+    labels_final = [item for m in xrange(len(labels_predcited)) for item in labels_predcited[m]]
     return(labels_final)
 
 def get_label(prediction):
     """
-    Convert the label into a rgb colour value
+    Convert the label vector from the CNN into a integer label 
+    and then retuen its colour value
     
     Input: Vector with 1-hot encoding labels
     
@@ -105,33 +107,25 @@ def get_label(prediction):
     index = prediction.index(max(prediction))
     return colorizer(index)
 
-def colorizer(pixel):
+def colorizer(label):
     """
     background = black = (0,0,0)
     outside = red = (255,0,0)
     inside = green = (255,255,0)
     lumen = yellow = (0,255,0)
     catheder shadow = blue = (0,0,255)
-    artery wall = turquisw = (0,255,255)
+    artery wall = turquoise = (0,255,255)
     stent = pink = (255,0,255)
     
-    input integer between 0-5
-    output RGV value of pixel
+    input: integer between 0-5 represnting class label
+    output: RGB value of label
     """
-    if pixel == 0:
-        return (255,0,0)
-    if pixel == 1:
-        return (255,255,0)
-    if pixel == 2:
-        return (0,255,0)
-    if pixel == 3:
-        return (0,0,255)
-    if pixel == 4:
-        return (0,255,255)
-    if pixel == 5:
-        return (255,0,255)
+    label2rgb = {0: (255,0,0), 1: (255,255,0), 2: (0,255,0), 
+                    3: (0,0,255), 4: (0,255,255), 5: (255,0,255)}
+    return label2rgb[label]
 
-def makeImage(predictions, box_size = 48):
+
+def makeImage(predictions_rgb, box_size = 48):
     """
     Creates an image from the predictions and scales it to the original image
 
@@ -139,21 +133,29 @@ def makeImage(predictions, box_size = 48):
 
     output: PIL image
     """
-    size = int(np.sqrt(len(predictions))), int(np.sqrt(len(predictions)))
-    im_gts_rgb = predictions #[get_label(predictions[i]) for i in range(0,len(predictions))]
-    im_label = Image.new("RGB", size)
-    im_label.putdata(im_gts_rgb)
-    #Here the image gets expaned top the original image size
-    #im_label = im_label.transform((box_size*int(np.sqrt(len(predictions))),box_size*int(np.sqrt(len(predictions)))), Image.EXTENT, (0,0,int(np.sqrt(len(predictions))),int(np.sqrt(len(predictions)))))
+    #Converting the array of predictions into a PIL image
+    size = int(np.sqrt(len(predictions_rgb))), int(np.sqrt(len(predictions_rgb)))
+    old_im = Image.new("RGB", size)
+    old_im.putdata(predictions_rgb)
+    old_size = old_im.size
+    new_size = (1500, 1500)
+    #new_size = (614, 614)
+    #Here the image gets expaned to the size of the labele image size if stride was > 1
+    if old_size != (852, 852):
+        old_im = old_im.transform((852,852), Image.EXTENT, (0,0,old_size[0],old_size[1]))
+    old_size = old_im.size
+    #Here the predicted image get framed so its size ist the one of the original input image
+    im_label = Image.new("RGB", new_size)
+    im_label.paste(old_im, (int((new_size[0]-old_size[0])/2),
+                      int((new_size[1]-old_size[1])/2)))
     return im_label
+
 
 def save_image(im_label, name):
     """
     Saves a PIL image
     
-    Imput: Pil image, path to save image OPTIONAL, name of image file OPTIONAL
-    
-    Output: File in Path of image
+    Input: PIL image, name of file
     """
     im_label.save(name)
 
