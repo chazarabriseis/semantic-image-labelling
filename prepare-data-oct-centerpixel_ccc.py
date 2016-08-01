@@ -19,14 +19,15 @@ os.chdir(cwd_gts)
 os.getcwd()
 
 box_size = 48
-pickle_file = 'size%s-6c-balance.pickle' % str(box_size)
+pickle_file = '%ssize%s-6c-balance.pickle' % (cwd_data,str(box_size))
 
 data_top = sorted(glob.glob('*'))
 print data_top
 
 
 def getDominantLabel(im_gst_crop):
-    """"Is counting occurancy of all different labels in the image and labels it with the most dominant one
+    """"Is counting occurancy of all different labels in the 
+    image and labels it with the most dominant one
     """
     #Convert the image into an array with RGB pixel values
     im_gst_pixel = im_gst_crop.load()  # this is not a list, nor is it list()'able
@@ -57,31 +58,22 @@ def getCenterLabel(pixel):
     artery wall = turquisw = (0,255,255)
     stent = pink = (255,0,255)
     
-    input RGV value of pixel
-    output integer between 1-5
+    input: RGB value of pixel
+    output: integer between 1-5 represnting a class described above
     """
-    if pixel == (255,0,0):
-        return 0
-    if pixel == (255,255,0):
-        return 1
-    if pixel == (0,255,0):
-        return 2
-    if pixel == (0,0,255):
-        return 3
-    if pixel == (0,255,255):
-        return 4
-    if pixel == (255,0,255):
-        return 5
-    else:
-	return 6 
-	print("not labelled right %s" % str(pixel))
+    rgb2label = {(255,0,0):0, (255,255,0):1, (0,255,0):2, 
+                    (0,0,255):3, (0,255,255):4, (255,0,255):5}
+    return rgb2label.get[pixel, 6]
+
 
 ### Set the parameter for data preparation
 #define the box size around 
 max_box_size = 48
 stride = 5
-print "%s images will be created per image" % str(((((900-max_box_size)/stride)+1) * (((900-max_box_size)/stride)+1)) )
-print "%s images will be created of the entire training set" % str(((((900-max_box_size)/stride)+1) * (((900-max_box_size)/stride)+1))*len(data_top))
+print "%s images will be created per image" 
+            % str(((((900-max_box_size)/stride)+1) * (((900-max_box_size)/stride)+1)) )
+print "%s images will be created of the entire training set" 
+            % str(((((900-max_box_size)/stride)+1) * (((900-max_box_size)/stride)+1))*len(data_top))
 
 
 ### Load the ground truth and image data and cut the into images with 64x64 images and the according label
@@ -90,8 +82,6 @@ label_pixel_balance = []
 for item in data_top:
     image_data = []
     label_pixel = []
-    index_1 = []
-    index_0 = []
     im_gst = Image.open(cwd_gts + item)
     im_top = Image.open(cwd_top + item[:item.find('.png')] + '.jpg')
     if (im_gst.size != im_top.size):
@@ -104,10 +94,10 @@ for item in data_top:
     width, height = im_gst.size
     pixels_gst = im_gst.load()
     #Go through the height (y-axes) of the image
-    for i in range(0,((height- max_box_size)/stride +1)):
+    for i in xrange(int((height- max_box_size)/stride +1)):
         center_point_y = max_box_size/2+i*stride
         #Go through the width (x-axes) of the image using the same centerpoint independent of boxsize
-        for j in range(0,((width- max_box_size)/stride + 1)):
+        for j in xrange(int((width- max_box_size)/stride + 1)):
             center_point_x = max_box_size/2+j*stride
             box = center_point_x-box_size/2, center_point_y-box_size/2, center_point_x+box_size/2,center_point_y+box_size/2
             image_data.append(np.array(im_top.crop(box)))
@@ -163,12 +153,12 @@ def randomize(dataset, labels):
   shuffled_dataset = dataset[permutation,:,:]
   shuffled_labels = labels[permutation]
   return shuffled_dataset, shuffled_labels
+
+
 train_dataset, train_labels = randomize(dataset,labels)
 
 
 # ### Save the images in a pickle file for later use
-os.chdir(cwd_data)
-
 try:
   f = open(pickle_file, 'wb')
   save = {
