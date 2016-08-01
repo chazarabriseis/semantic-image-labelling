@@ -17,9 +17,9 @@ import os
 
 box_size = 24
 kernel_size = 3
-epoch_nummer = 40
-pickle_file = 'size%s-balance.pickle' % str(box_size)
-run_name = 'oct-cvn-%sbal' % str(box_size)
+epoch_nummer = 50
+pickle_file = 'size%s-6c-balance.pickle' % str(box_size)
+run_name = 'oct-cvn-%sbal-6c' % str(box_size)
 cwd_checkpoint = '/u/juliabal/OCT-project/Data/Checkpoints/%s' % run_name
 cwd = '/u/juliabal/OCT-project/'
 cwd_data = '/u/juliabal/OCT-project/Data/'
@@ -58,13 +58,13 @@ network = fully_connected(network, 128, activation='relu')
 network = dropout(network, 0.5)
 network = fully_connected(network, 128, activation='relu')
 network = dropout(network, 0.5)
-network = fully_connected(network, 2, activation='softmax')
+network = fully_connected(network, 6, activation='softmax')
 network = regression(network, optimizer='adam',
                      loss='categorical_crossentropy',
                      learning_rate=0.001)
 
 # Train using classifier
-model = tflearn.DNN(network, tensorboard_verbose=0,tensorboard_dir=cwd,checkpoint_path=cwd_checkpoint)
+model = tflearn.DNN(network, tensorboard_verbose=0,tensorboard_dir=cwd,checkpoint_path=cwd_checkpoint,max_checkpoints=10)
 model.fit(X, Y, n_epoch=epoch_nummer, validation_set=0.1, show_metric=True, run_id=run_name, snapshot_epoch=True)
 
 

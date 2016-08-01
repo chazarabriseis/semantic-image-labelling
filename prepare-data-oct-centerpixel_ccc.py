@@ -18,7 +18,7 @@ cwd_data = '/u/juliabal/OCT-project/Data/'
 os.chdir(cwd_gts)
 os.getcwd()
 
-box_size = 48
+box_size = 12
 pickle_file = '%ssize%s-6c-balance.pickle' % (cwd_data,str(box_size))
 
 data_top = sorted(glob.glob('*'))
@@ -63,17 +63,15 @@ def getCenterLabel(pixel):
     """
     rgb2label = {(255,0,0):0, (255,255,0):1, (0,255,0):2, 
                     (0,0,255):3, (0,255,255):4, (255,0,255):5}
-    return rgb2label.get[pixel, 6]
+    return rgb2label.get(pixel, 6)
 
 
 ### Set the parameter for data preparation
 #define the box size around 
 max_box_size = 48
 stride = 5
-print "%s images will be created per image" 
-            % str(((((900-max_box_size)/stride)+1) * (((900-max_box_size)/stride)+1)) )
-print "%s images will be created of the entire training set" 
-            % str(((((900-max_box_size)/stride)+1) * (((900-max_box_size)/stride)+1))*len(data_top))
+print "%s images will be created per image" % str(((((900-max_box_size)/stride)+1) * (((900-max_box_size)/stride)+1)) )
+print "%s images will be created of the entire training set" % str(((((900-max_box_size)/stride)+1) * (((900-max_box_size)/stride)+1))*len(data_top))
 
 
 ### Load the ground truth and image data and cut the into images with 64x64 images and the according label
