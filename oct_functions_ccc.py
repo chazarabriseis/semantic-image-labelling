@@ -138,11 +138,11 @@ def makeImage(predictions_rgb, box_size = 48):
     old_im = Image.new("RGB", size)
     old_im.putdata(predictions_rgb)
     old_size = old_im.size
-    new_size = (1500, 1500)
-    #new_size = (614, 614)
+    #new_size = (1500, 1500)
+    new_size = (1024, 1024)
     #Here the image gets expaned to the size of the labele image size if stride was > 1
-    if old_size != (852, 852):
-        old_im = old_im.transform((852,852), Image.EXTENT, (0,0,old_size[0],old_size[1]))
+    if old_size != (614, 614):
+        old_im = old_im.transform((614,614), Image.EXTENT, (0,0,old_size[0],old_size[1]))
     old_size = old_im.size
     #Here the predicted image get framed so its size ist the one of the original input image
     im_label = Image.new("RGB", new_size)

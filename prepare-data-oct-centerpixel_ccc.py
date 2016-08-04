@@ -18,7 +18,7 @@ cwd_data = '/u/juliabal/OCT-project/Data/'
 os.chdir(cwd_gts)
 os.getcwd()
 
-box_size = 12
+box_size = 40
 pickle_file = '%ssize%s-6c-balance.pickle' % (cwd_data,str(box_size))
 
 data_top = sorted(glob.glob('*'))
