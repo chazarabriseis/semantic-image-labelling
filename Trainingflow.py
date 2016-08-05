@@ -23,7 +23,8 @@ cwd_data = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/'
 ####	Prepare the data
 
 ### Set the parameters for data preparation
-box_size = int(sys.argv[1])
+#box_size = int(sys.argv[1])
+box_size = 48
 pickle_file = '%ssize%s-6c-balance.pickle' % (cwd_data,str(box_size))
 
 data_list = sorted(glob.glob1(cwd_label,'*'))
@@ -47,7 +48,7 @@ kernel_size = box_size2kernel[box_size]
 run_name = 'oct-cvn-%sbal-6c' % str(box_size)
 cwd_checkpoint = cwd_data+'Checkpoints/%s' % run_name
 num_labels = 6
-num_epoch = 40
+num_epoch = 50
 
 ### Load data & prepare the data
 images, labels = load_data(pickle_file)

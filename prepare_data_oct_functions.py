@@ -72,7 +72,7 @@ def get_data(data_list, box_size, cwd_raw, cwd_label):
     Input: file, size of the smaller image, path to labels of file, path to raw image of file
     Output: List of images, List of labels
     '''
-    stride = 10
+    stride = 5
     images_balanced = []
     labels_balanced = []
     for data_name in data_list:
