@@ -24,7 +24,10 @@ def get_center_label(pixel):
     '''
     rgb2label = {(255,0,0):0, (255,255,0):1, (0,255,0):2, 
                     (0,0,255):3, (0,255,255):4, (255,0,255):5}
-    return rgb2label.get(pixel, 6)
+    label = rgb2label.get(pixel, 6)
+    if label == 6:
+        print 'False pixel',pixel
+    return label 
 
 
 def crop_image(image, size):
@@ -89,7 +92,6 @@ def get_data(data_list, box_size, cwd_raw, cwd_label):
     for data_name in data_list:
         print '####   Processing: ', data_name
         im_label = Image.open(cwd_label + data_name)
-        pixels_label = im_label.load()
         im_raw = Image.open(cwd_raw + data_name[:data_name.find('.png')] + '.jpg')
         #assert (im_label.size != im_raw.size), "Problem, label and raw data don't have the same size"
         size=0.6
@@ -99,6 +101,7 @@ def get_data(data_list, box_size, cwd_raw, cwd_label):
         width, height = im_label.size
         images = [] 
         labels = []
+        pixels_label = im_label.load()
         for i in xrange(int(height-box_size)/stride):
             center_point_y = box_size/2+i*stride
             #Go through the width (x-axes) of the image using the same centerpoint independent of boxsize
@@ -120,7 +123,6 @@ def randomize(images, labels):
     :rtype: PIL images and np.float32
     '''
     images = np.asarray(images)
-    print images.shape
     labels = np.asarray(labels)
     permutation = np.random.permutation(labels.shape[0])
     shuffled_images = images[permutation,:,:]
