@@ -6,7 +6,7 @@
 import glob
 from prepare_data_oct_functions import get_data, randomize, save_pickeldata
 from train_model_oct_functions import load_data, data_prep, train_model
-
+import sys
 
 ########################################################################################## 
 ####	Set directories
@@ -23,7 +23,7 @@ cwd_data = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/'
 ####	Prepare the data
 
 ### Set the parameters for data preparation
-box_size = 48
+box_size = int(sys.argv[1])
 pickle_file = '%ssize%s-6c-balance.pickle' % (cwd_data,str(box_size))
 
 data_list = sorted(glob.glob1(cwd_label,'*'))
