@@ -11,12 +11,14 @@ import sys
 ########################################################################################## 
 ####	Set directories
 
-#cwd_raw = '../Data/Trainingdata/Raw/'
-#cwd_label = '../Trainingdata/Multiple/'
-#cwd_data = '../Data/'
-cwd_raw = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Trainingdata/Raw/'
-cwd_label = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Trainingdata/Multiple/'
-cwd_data = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/'
+cwd_raw = '../Data/Trainingdata/Raw/'
+cwd_label = '../Data/Trainingdata/Multiple/'
+cwd_data = '../Data/'
+cwd_checkpoints = '../Data/Checkpoints'
+
+#cwd_raw = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Trainingdata/Raw/'
+#cwd_label = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Trainingdata/Multiple/'
+#cwd_data = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/'
 
 
 ##########################################################################################

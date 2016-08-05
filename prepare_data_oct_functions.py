@@ -109,6 +109,7 @@ def randomize(images, labels):
     Output: randomized list of images and list of labels
     '''
     images = np.asarray(images)
+    print images.shape
     labels = np.asarray(labels)
     permutation = np.random.permutation(labels.shape[0])
     shuffled_images = images[permutation,:,:]
