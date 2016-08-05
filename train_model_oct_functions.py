@@ -43,7 +43,7 @@ def data_prep(images, labels, v_size = 0.0, te_size = 0.0):
 	:rtype: np.float32
 	'''
 	t_size = 1-v_size-te_size
-    image_size = images.shape[1]
+        image_size = images.shape[1]
 	dim = images.shape[3]
 	num_labels = max(labels)+1
 	images = images.reshape((-1, image_size,image_size,dim)).astype(np.float32)
@@ -65,17 +65,17 @@ def data_prep(images, labels, v_size = 0.0, te_size = 0.0):
 
 
 def get_kernel_size(box_size):
-    '''Set kernel size according to box_size
+	'''Set kernel size according to box_size
     
-    :param int box_size: image size to train on
-    :return: kernel size for this model
-    :rtype: int
-    '''
+	:param int box_size: image size to train on
+	:return: kernel size for this model
+	:rtype: int
+	'''
 	box_size2kernel = {48: 5, 24:3, 12:2}
-    return box_size2kernel[box_size]
+	return box_size2kernel[box_size]
 
 
-def train_model(images,labels,input_size,kernel_size,cwd_data,cwd_checkpoint,num_epoch=40,num_labels=6):
+def train_model(images,labels,input_size,kernel_size,cwd_data,cwd_checkpoint,run_name,num_epoch=40,num_labels=6):
 	'''Trains a CNN network and saves the trained model in cwd_checkpoint path
 
 	:param np.float32 images: RGB images with shape (training_size, input_size, input_size, 3)
@@ -123,7 +123,7 @@ def train_model(images,labels,input_size,kernel_size,cwd_data,cwd_checkpoint,num
 
 	# Train using classifier
 	model = tflearn.DNN(network, tensorboard_verbose=0,tensorboard_dir=cwd_data,checkpoint_path=cwd_checkpoint,max_checkpoints=2)
-	model.restore(cwd_data+'oct-cvn-48bal-6c-114300')
+	model.load(cwd_data+'bal48-43650')
 	model.fit(images, labels, n_epoch=num_epoch, validation_set=0.1, show_metric=True, run_id=run_name, snapshot_epoch=True)
 
 

@@ -20,32 +20,13 @@ cwd_data = '../Data/'
 
 
 ##########################################################################################
-####	Prepare the data
-
-### Set parameters for data preparation
-#box_size = int(sys.argv[1])
-box_size = 48
-pickle_file = '%ssize%s-6c-balance.pickle' % (cwd_data,str(box_size))
-
-data_list = sorted(glob.glob1(cwd_label,'*'))
-print data_list
-
-### Prepare data for the CVN
-images, labels = get_data(data_list, box_size, cwd_raw, cwd_label)
-print 'Length of created dataset', len(labels)
-images, labels = randomize(images,labels)
-	
-### Save them as a pickle file
-save_pickeldata(images, labels, pickle_file)
-
-
-##########################################################################################
 ####	Train the model
 
 ### Set parameters for training
-
+box_size = 48
+pickle_file = '%ssize%s-6c-balance.pickle' % (cwd_data,str(box_size))
 kernel_size = get_kernel_size(box_size)
-run_name = 'oct-cvn-%sbal-6c' % str(box_size)
+run_name = 'oct-cvn-run2-%sbal-6c' % str(box_size)
 cwd_checkpoint = cwd_data+'Checkpoints/%s' % run_name
 num_labels = 6
 num_epoch = 50
