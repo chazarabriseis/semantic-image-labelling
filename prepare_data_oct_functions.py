@@ -9,7 +9,8 @@ from random import shuffle
     
 
 def get_center_label(pixel):
-    '''
+    '''Convert RGB pixel to label
+
     outside = red = (255,0,0) = 0
     lumen = yellow = (255,255,0) = 1
     inside = green = (0,255,0) = 2
@@ -17,32 +18,39 @@ def get_center_label(pixel):
     artery wall = turquise = (0,255,255) = 4 
     stent = pink = (255,0,255) = 5
     
-    input: RGB value of pixel
-    output: integer between 1-5 representing a class described above
+    :param int pixel: tuple of RGB value of pixel
+    :return: label representing a class described above
+    :rtype: int
     '''
     rgb2label = {(255,0,0):0, (255,255,0):1, (0,255,0):2, 
                     (0,0,255):3, (0,255,255):4, (255,0,255):5}
     return rgb2label.get(pixel, 6)
 
 
-def crop_image(image, factor):
-    '''
-    crop image by a factor
+def crop_image(image, size):
+    '''Crop sized centre of image  
     
-    Input: PIL image
-    Output: PIL image
+    :param PIL image image: image to be cropped
+    :return: cropped image
+    :rtype: PIL image
     '''
+    factor = (1-size)/2
     width, height = image.size
     box = factor*width,factor*height,(1-factor)*width,(1-factor)*height
     return image.crop(box)
 
 
 def make_balanced_dataset(images,labels,images_balanced,labels_balanced):
-    '''
-    Create a balanced dataset adjusting everything to the smallest class represented  
+    '''Create a balanced dataset 
 
-    Input: list of images, list of labels
-    Output: balanced list of images and list of labels
+    In this instance the balnacing is adjusted to stent class (label 5) 
+    since the cather shadow class is somtimes smaller (label 3) but the focus
+    is on training the stent
+
+    :param PIL images images: list of RGB images
+    :param np.float32 labels: list of labels shape (size_dataset,)
+    :return: balanced dataset consisting of same amount of data from each class
+    :rtype: PIL images and np.float32
     '''
     indices = {}
     for count in xrange(6):
@@ -66,11 +74,14 @@ def make_balanced_dataset(images,labels,images_balanced,labels_balanced):
 
 
 def get_data(data_list, box_size, cwd_raw, cwd_label):
-    '''
-    Create a dataset with smaller images and their center pixel value as a label
+    '''Create a dataset with smaller images and their center pixel value as a label
 
-    Input: file, size of the smaller image, path to labels of file, path to raw image of file
-    Output: List of images, List of labels
+    :param str data_list: list of datanames available
+    :param int box_size: size of the smaller images
+    :param str cwd_raw: path to raw images
+    :param str cwd_label: path to ground thruth images
+    :return: images and labels
+    :rtype: np.float32
     '''
     stride = 5
     images_balanced = []
@@ -81,10 +92,9 @@ def get_data(data_list, box_size, cwd_raw, cwd_label):
         pixels_label = im_label.load()
         im_raw = Image.open(cwd_raw + data_name[:data_name.find('.png')] + '.jpg')
         #assert (im_label.size != im_raw.size), "Problem, label and raw data don't have the same size"
-        #Remove the outside of the images to concentre on the centre where all the action is happening
-        factor =0.2
-        im_label = crop_image(im_label,factor)
-        im_raw = crop_image(im_raw,factor)
+        size=0.6
+        im_label = crop_image(im_label,size)
+        im_raw = crop_image(im_raw,size)
         #Go through the height (y-axes) of the image
         width, height = im_label.size
         images = [] 
@@ -102,11 +112,12 @@ def get_data(data_list, box_size, cwd_raw, cwd_label):
 
 
 def randomize(images, labels):
-    '''
-    randomisez a dataset and labels by keeping the order
+    '''Shuffle a dataset and labels while keeping the order
 
-    Input: list of images, list of labels
-    Output: randomized list of images and list of labels
+    :param PIL images images: list of RGB images
+    :param np.float32 labels: list of labels shape (size_dataset,)
+    :return: shuffled dataset
+    :rtype: PIL images and np.float32
     '''
     images = np.asarray(images)
     print images.shape
@@ -118,10 +129,11 @@ def randomize(images, labels):
 
 
 def save_pickeldata(train_images, train_labels, pickle_file):
-    '''
-    Saves data of images and labels for later use
+    '''Save dataset of images and labels in pickle format
 
-    Input: list of images, list of labels, file to save it to
+    :param np.float32 images: RGB images with shape (training_size, input_size, input_size, 3)
+    :param np.float32 labels: labels with shape (training_size, num_labels)
+    :param str pickle_file: path and filename to save to
     '''
     try:
         f = open(pickle_file, 'wb')
