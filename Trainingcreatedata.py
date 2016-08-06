@@ -1,5 +1,5 @@
 ########################################################################################## 
-####	Code to train a CVN for semantic image pixel labelling
+####	Code to train a CNN for semantic image pixel labelling
 ####	Author: Julia Baldauf
 ####	5.8.2016		
 

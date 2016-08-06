@@ -71,7 +71,7 @@ def get_kernel_size(box_size):
 	:return: kernel size for this model
 	:rtype: int
 	'''
-	box_size2kernel = {48: 5, 24:3, 12:2}
+	box_size2kernel = {24:3, 30:3, 36:3, 42:5, 48:5, 54:5, 60:5}
 	return box_size2kernel[box_size]
 
 
