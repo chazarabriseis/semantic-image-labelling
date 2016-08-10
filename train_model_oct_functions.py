@@ -123,7 +123,7 @@ def train_model(images,labels,input_size,kernel_size,cwd_data,cwd_checkpoint,run
 
 	# Train using classifier
 	model = tflearn.DNN(network, tensorboard_verbose=0,tensorboard_dir=cwd_data,checkpoint_path=cwd_checkpoint,max_checkpoints=2)
-	model.load(cwd_data+'bal48-43650')
+	#model.load(cwd_data+'bal48-43650')
 	model.fit(images, labels, n_epoch=num_epoch, validation_set=0.1, show_metric=True, run_id=run_name, snapshot_epoch=True)
 
 
