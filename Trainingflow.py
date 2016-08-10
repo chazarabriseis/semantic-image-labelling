@@ -24,7 +24,7 @@ cwd_data = '../Data/'
 
 ### Set parameters for data preparation
 #box_size = int(sys.argv[1])
-box_size = 54
+box_size = 90
 pickle_file = '%ssize%s-6c-balance.pickle' % (cwd_data,str(box_size))
 
 data_list = sorted(glob.glob1(cwd_label,'*'))
