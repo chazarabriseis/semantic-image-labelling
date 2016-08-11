@@ -13,6 +13,7 @@ from sklearn import metrics
 from gco_python.pygco import cut_simple, cut_from_graph
 from matplotlib import cm
 import glob
+from prepare_data_oct_functions import crop_image
 
 def get_model_name(cwd_model,box_size):
     models = sorted(glob.glob1(cwd_model,'*oct-cvn-*'))
@@ -96,6 +97,8 @@ def create_f1_score(im_prediction_gt,im_prediction_cnn):
     :rtype: double
     '''
     print("Calculating f1 score")
+    im_prediction_gt = crop_image(im_prediction_gt, 0.6)
+    im_prediction_cnn = crop_image(im_predictions_cnn,0.6)
     labels_gt = np.asarray(im_prediction_gt).reshape(-1,3)
     labels_cnn = np.asarray(im_prediction_cnn).reshape(-1,3)
     labels_cnn = [get_label_from_rgb(labels_cnn[i]) for i in xrange(len(labels_cnn))]
