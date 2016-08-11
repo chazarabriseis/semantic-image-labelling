@@ -10,7 +10,7 @@ from tflearn.layers.estimator import regression
 import numpy as np
 from PIL import Image
 from sklearn import metrics
-from pygco import cut_simple, cut_from_graph
+from gco_python.pygco import cut_simple, cut_from_graph
 from matplotlib import cm
 import glob
 
