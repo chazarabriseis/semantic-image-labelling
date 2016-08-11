@@ -13,17 +13,17 @@ from prepare_data_oct_functions import crop_image
 
 #Set parameter of model to be evaluated
 
-#cwd_raw = '../Data/Evaluationdata/Raw/'
-#cwd_label = '../Data/Evaluationdata/Multiple/'
-#cwd_data = '../Data/Evaluationdata/'
-#cwd_model = '../Data/Checkpoints'
-cwd_raw = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/Raw/'
-cwd_label = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/Multiple/'
-cwd_data = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/'
-cwd_model = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/final/'
+cwd_raw = '../Data/Evaluationdata/Raw/'
+cwd_label = '../Data/Evaluationdata/Multiple/'
+cwd_data = '../Data/Evaluationdata/'
+cwd_model = '../Data/Checkpoints/'
+#cwd_raw = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/Raw/'
+#cwd_label = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/Multiple/'
+#cwd_data = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Evaluationdata/'
+#cwd_model = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/final/'
 
-stride = 100
-box_size = 48
+stride = 1
+box_size = 66
 model_name = get_model_name(cwd_model,box_size)
 
 data_eval = sorted(glob.glob1(cwd_raw,'*.jpg*'))
@@ -104,7 +104,8 @@ for data_name in data_eval:
         #labels_temp = [colorizer(get_label_from_cnn(predictions_temp[k])) for k in xrange(len(predictions_temp))]
         labels_temp = [get_label_from_cnn(predictions_temp[k]) for k in xrange(len(predictions_temp))]
         labels_predcited.append(labels_temp)
-        print('Line %s done' % str(i))
+        if (i%50 == 0):
+		print('Line %s done' % str(i))
     labels_final = [item for m in xrange(len(labels_predcited)) for item in labels_predcited[m]]
     labels_cnn = labels_final
     print("Succesfully calculated cnn predictions")
