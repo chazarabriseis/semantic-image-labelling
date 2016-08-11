@@ -72,7 +72,7 @@ def get_kernel_size(box_size):
 	:rtype: int
 	'''
 	box_size2kernel = {24:3, 30:3, 36:3, 42:5, 48:5, 54:5, 60:5}
-	return box_size2kernel[box_size]
+	return box_size2kernel.get(box_size, 5)
 
 
 def train_model(images,labels,input_size,kernel_size,cwd_data,cwd_checkpoint,run_name,num_epoch=40,num_labels=6):
@@ -123,7 +123,7 @@ def train_model(images,labels,input_size,kernel_size,cwd_data,cwd_checkpoint,run
 
 	# Train using classifier
 	model = tflearn.DNN(network, tensorboard_verbose=0,tensorboard_dir=cwd_data,checkpoint_path=cwd_checkpoint,max_checkpoints=2)
-	#model.load(cwd_data+'bal48-43650')
+	#model.load(cwd_data+'oct-cvn-48bal-6c-114300')
 	model.fit(images, labels, n_epoch=num_epoch, validation_set=0.1, show_metric=True, run_id=run_name, snapshot_epoch=True)
 
 

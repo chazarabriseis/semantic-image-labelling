@@ -23,7 +23,7 @@ cwd_data = '../Data/'
 ####	Train the model
 
 ### Set parameters for training
-box_size = 48
+box_size = 54
 pickle_file = '%ssize%s-6c-balance.pickle' % (cwd_data,str(box_size))
 kernel_size = get_kernel_size(box_size)
 run_name = 'oct-cvn-run2-%sbal-6c' % str(box_size)
