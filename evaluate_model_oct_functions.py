@@ -98,12 +98,12 @@ def create_f1_score(im_prediction_gt,im_prediction_cnn):
     '''
     print("Calculating f1 score")
     im_prediction_gt = crop_image(im_prediction_gt, 0.6)
-    im_prediction_cnn = crop_image(im_predictions_cnn,0.6)
+    im_prediction_cnn = crop_image(im_prediction_cnn,0.6)
     labels_gt = np.asarray(im_prediction_gt).reshape(-1,3)
     labels_cnn = np.asarray(im_prediction_cnn).reshape(-1,3)
     labels_cnn = [get_label_from_rgb(labels_cnn[i]) for i in xrange(len(labels_cnn))]
     labels_gt = [get_label_from_rgb(labels_gt[i]) for i in xrange(len(labels_gt))]
-    score = metrics.f1_score(labels_cnn,labels_gt, average= None)
+    score = metrics.f1_score(labels_cnn,labels_gt, labels=[0,1,2,3,4,5],average= None)
     return score
 
 def get_label_from_rgb(pixel):

@@ -23,17 +23,21 @@ cwd_model = '../Data/Checkpoints/'
 #cwd_model = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/final/'
 
 stride = 1
-box_size = 66
+box_size = 12
 model_name = get_model_name(cwd_model,box_size)
 
 data_eval = sorted(glob.glob1(cwd_raw,'*.jpg*'))
 print data_eval
 
 #Open file for f1 score
-f = open(cwd_data+'F1_scores%s.txt'%str(box_size), 'w')
-f.write('F1 scores%s \n' % str(box_size))
-f.write('Box_size, f1score 0, f1score 1, f1score 2, f1score 3, f1score 4, f1score 5, f1score overall\n')
+f_cnn = open(cwd_data+'F1_scores%scnn.txt'%str(box_size), 'w')
+f_cnn.write('F1 scores%s \n' % str(box_size))
+f_cnn.write('Box_size, f1score 0, f1score 1, f1score 2, f1score 3, f1score 4, f1score 5, f1score overall\n')
     
+f_cnn_em = open(cwd_data+'F1_scores%scnn_em.txt'%str(box_size), 'w')
+f_cnn_em.write('F1 scores%s \n' % str(box_size))
+f_cnn_em.write('Box_size, f1score 0, f1score 1, f1score 2, f1score 3, f1score 4, f1score 5, f1score overall\n')
+
 input_size = box_size
 kernel_size = get_kernel_size(input_size)
 # Real-time data preprocessing
@@ -118,6 +122,13 @@ for data_name in data_eval:
     save_image(im_prediction_cnn, prediction_cnn_name)
     print("Succesfully saved cnn prediction image")
 
+    im_prediction_gt = load_image(data_name_label)
+    f_cnn.write(data_name[5:data_name.find('.jpg')]+',')
+    f1_scores = create_f1_score(im_prediction_gt,im_prediction_cnn)
+    for score in f1_scores:
+        f_cnn.write(str(score)+',')
+    f_cnn.write('0.0\n')
+    
     ##improve prediction image by applying energy minimization
     im_prediction_cnn_em = apply_em(im_prediction_cnn)
     print("Succesfully calculated prediction using EM")
@@ -127,13 +138,13 @@ for data_name in data_eval:
     print("Succesfully saved cnn+em prediction image")
 
     ##Save the F1 scores in a txt file
-    im_prediction_gt = load_image(data_name_label)
     #write into f1 score
-    f.write(data_name[5:data_name.find('.jpg')]+',')
-    f1_scores = create_f1_score(im_prediction_gt,im_prediction_cnn)
+    f_cnn_em.write(data_name[5:data_name.find('.jpg')]+',')
+    f1_scores = create_f1_score(im_prediction_gt,im_prediction_cnn_em)
     for score in f1_scores:
-        f.write(str(score)+',')
-    f.write('0.0\n')
+        f_cnn_em.write(str(score)+',')
+    f_cnn_em.write('0.0\n')
 
 #close file for f1 score
-f.close()
+f_cnn.close()
+f_cnn_em.close()
