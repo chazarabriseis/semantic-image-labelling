@@ -137,7 +137,7 @@ def save_pickeldata(train_images, train_labels, pickle_file):
     :param np.float32 labels: labels with shape (training_size, num_labels)
     :param str pickle_file: path and filename to save to
     '''
-    train_images = train_images.reduce()
+    #train_images = train_images.reduce()
     try:
         f = open(pickle_file, 'wb')
         save = {
