@@ -150,15 +150,15 @@ def crop_image(image, size):
 
 
 
-cwd_eval = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/resulst_from_flow/'
-cwd_data = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Data_all/Multiple/'
-#cwd_eval = '..//Data/resulst_from_flow/'
+#cwd_eval = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/resulst_from_flow/'
 #cwd_data = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Data_all/Multiple/'
+cwd_eval = '../Data/Evaluationdata/'
+cwd_data = '../Data/Evaluationdata/Multiple/'
 
 
  
 
-for box_size in [12]: #,18,24,30,36,42,48,54,60,66]:
+for box_size in [12,18,24,30,36,42,48,54,60,66]:
     f_cnn = open(cwd_eval+'F1_scores2_cnn%s.txt'%str(box_size), 'w')
     f_cnn.write('F1 scores%s \n' % str(box_size))
     f_cnn.write('image, f1score 0, f1score 1, f1score 2, f1score 3, f1score 4, f1score 5, f1score 6\n')
