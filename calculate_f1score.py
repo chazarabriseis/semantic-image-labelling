@@ -158,48 +158,45 @@ cwd_data = '/Users/jbaldauf/Documents/Tensorflow/OCT-project/Data/Data_all/Multi
 
  
 
-for box_size in [12]: #,18,24,30,36,42,48,54,60,66]:
-    f_cnn = open(cwd_eval+'F1_scores2_cnn%s.txt'%str(box_size), 'w')
-    f_cnn.write('F1 scores%s \n' % str(box_size))
-    f_cnn.write('image, f1score 0, f1score 1, f1score 2, f1score 3, f1score 4, f1score 5, f1score 6\n')
+for box_size in [18,24,30,36,42,48,54,60,66]:
+    with open(cwd_eval+'F1_scores2_cnn%s.txt'%str(box_size), 'w') as f_cnn:
+        f_cnn.write('F1 scores%s \n' % str(box_size))
+        f_cnn.write('image, f1score 0, f1score 1, f1score 2, f1score 3, f1score 4, f1score 5, f1score 6\n')
 
-    f_cnn_em = open(cwd_eval+'F1_scores2_cnn_em%s.txt'%str(box_size), 'w')
-    f_cnn_em.write('F1 scores%s \n' % str(box_size))
-    f_cnn_em.write('image, f1score 0, f1score 1, f1score 2, f1score 3, f1score 4, f1score 5, f1score 6\n')
+        with open(cwd_eval+'F1_scores2_cnn_em%s.txt'%str(box_size), 'w') as  f_cnn_em:
+            f_cnn_em.write('F1 scores%s \n' % str(box_size))
+            f_cnn_em.write('image, f1score 0, f1score 1, f1score 2, f1score 3, f1score 4, f1score 5, f1score 6\n')
 
-    print('Box_Size:',str(box_size))
-    for image in ['01','06','12','18','24','30','36','42','48','54','60']:
-        print('Image',image)
-        data_gt_name = 'Image0%s.png'%image
-        data_cnn_name = 'Image0%s_cnn_1_%s.png'%(image, str(box_size))
-        data_cnn_em_name = 'Image0%s_cnn_em_1_%s.png'%(image, str(box_size))
+            print('Box_Size:',str(box_size))
+            for image in ['01','06','12','18','24','30','36','42','48','54','60']:
+                print('Image',image)
+                data_gt_name = 'Image0%s.png'%image
+                data_cnn_name = 'Image0%s_cnn_1_%s.png'%(image, str(box_size))
+                data_cnn_em_name = 'Image0%s_cnn_em_1_%s.png'%(image, str(box_size))
 
-        dataset = {}
-        dataset['im_gt'] = np.asarray(crop_image(Image.open(cwd_data + data_gt_name),0.6))
-        dataset['im_cnn'] = np.asarray(crop_image(Image.open(cwd_eval + data_cnn_name),0.6))
-        dataset['im_cnn_em'] = np.asarray(apply_em(crop_image(Image.open(cwd_eval + data_cnn_name),0.6))) #np.asarray(crop_image(Image.open(cwd_eval + data_cnn_em_name),0.6))
+                dataset = {}
+                dataset['im_gt'] = np.asarray(crop_image(Image.open(cwd_data + data_gt_name),0.6))
+                dataset['im_cnn'] = np.asarray(crop_image(Image.open(cwd_eval + data_cnn_name),0.6))
+                dataset['im_cnn_em'] = np.asarray(apply_em(crop_image(Image.open(cwd_eval + data_cnn_name),0.6))) #np.asarray(crop_image(Image.open(cwd_eval + data_cnn_em_name),0.6))
 
-        for data in dataset:
-            dataset[data] = dataset[data].reshape(-1,3)
-            dataset[data] = [getCenterLabel(dataset[data][i]) for i in xrange(len(dataset[data]))]
+                for data in dataset:
+                    dataset[data] = dataset[data].reshape(-1,3)
+                    dataset[data] = [getCenterLabel(dataset[data][i]) for i in xrange(len(dataset[data]))]
 
-        f1_score_cnn = []
-        f1_score_cnn_em = []
-        f1_score_cnn = metrics.f1_score(dataset['im_gt'], dataset['im_cnn'], labels = [0,1,2,3,4,5], average= None)
-        f1_score_cnn_em = metrics.f1_score(dataset['im_gt'], dataset['im_cnn_em'], labels = [0,1,2,3,4,5], average= None)
+                f1_score_cnn = []
+                f1_score_cnn_em = []
+                f1_score_cnn = metrics.f1_score(dataset['im_gt'], dataset['im_cnn'], labels = [0,1,2,3,4,5], average= None)
+                f1_score_cnn_em = metrics.f1_score(dataset['im_gt'], dataset['im_cnn_em'], labels = [0,1,2,3,4,5], average= None)
 
-        f_cnn.write(image+',')
-        for score in f1_score_cnn:
-            f_cnn.write(str(score)+',')
-        f_cnn.write('0.0\n')
+                f_cnn.write(image+',')
+                for score in f1_score_cnn:
+                    f_cnn.write(str(score)+',')
+                f_cnn.write('0.0\n')
 
-        f_cnn_em.write(image+',')
-        for score in f1_score_cnn_em:
-            f_cnn_em.write(str(score)+',')
-        f_cnn_em.write('0.0\n')
-
-    f_cnn.close()
-    f_cnn_em.close()
+                f_cnn_em.write(image+',')
+                for score in f1_score_cnn_em:
+                    f_cnn_em.write(str(score)+',')
+                f_cnn_em.write('0.0\n')
 
 
 

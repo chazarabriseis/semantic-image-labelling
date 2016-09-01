@@ -1,7 +1,7 @@
 ########################################################################################## 
-####	Code to train a CVN for semantic image pixel labelling
-####	Author: Julia Baldauf
-####	5.8.2016		
+####    Code to train a CNN for semantic image pixel labelling of OCT images
+####    Author: Julia Baldauf
+####    5.8.2016	
 
 import glob
 from prepare_data_oct_functions import get_data, randomize, save_pickeldata
